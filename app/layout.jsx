@@ -1,9 +1,25 @@
+import  '@styles/globals.css';
+
+export const metadata = {
+    title : "ShareAI-Prompt",
+    description : "Share your basic prompt with your friends"
+}
 
 
-function layout() {
+function RootLayout({children}) {
   return (
-    <div>layout</div>
+   <html lang="en">
+    <body>
+        <div className="main">
+            <div className="gradient" />
+        </div>
+        <main className="app">
+            {/* <Header /> */}
+            {children}
+        </main>
+    </body>
+   </html>
   )
 }
 
-export default layout
+export default RootLayout

@@ -72,6 +72,16 @@
 }
 
 /* Tailwind Styles */
+@layer utilities {
+  .font-inter {
+    /* Define your font styles here */
+    font-family: Inter, sans-serif;
+  }
+  .font-satoshi {
+    /* Define your font styles here */
+    font-family: satoshi, sans-serif;
+  }
+}
 
 .app {
   @apply relative z-10 flex justify-center items-center flex-col max-w-7xl mx-auto sm:px-16 px-6;
