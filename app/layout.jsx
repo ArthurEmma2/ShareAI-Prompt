@@ -1,4 +1,5 @@
 import  '@styles/globals.css';
+import Nav from "../components/Nav"
 
 export const metadata = {
     title : "ShareAI-Prompt",
@@ -15,6 +16,7 @@ function RootLayout({children}) {
         </div>
         <main className="app">
             {/* <Header /> */}
+        <Nav />
             {children}
         </main>
     </body>
