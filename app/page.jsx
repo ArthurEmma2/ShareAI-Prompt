@@ -1,4 +1,5 @@
 
+import Feed from './../components/Feed';
 function Home() {
   return (
     <section className="w-full flex-center flex-col">
@@ -7,6 +8,8 @@ function Home() {
         <span className="orange_gradient text-center"> AI-powered Prompt</span></h1>
         <p className="desc capitalize text-center">Discover best ai prompt for chatgpt, Bard and notion
          lorem opensource best software with next js lets go </p>
+
+        <Feed />
     </section>
   );
 }
