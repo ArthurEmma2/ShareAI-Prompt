@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 function Nav() {
-  const isUserLogggedIn = true;
+  const isUserLogggedIn = false;
   const [providers, setProviders] = useState(null);
 
   useEffect(() => {
