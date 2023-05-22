@@ -6,9 +6,9 @@ import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 function Nav() {
-  const isUserLogggedIn = false;
+  const isUserLogggedIn = true;
   const [providers, setProviders] = useState(null);
-  const [toggleDropdrown, setToggleDropdown] = useSession(flase);
+  const [toggleDropdrown, setToggleDropdown] = useState(true);
 
   useEffect(() => {
     const setProfileProvider = async () => {
