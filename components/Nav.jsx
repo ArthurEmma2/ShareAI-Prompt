@@ -42,8 +42,38 @@ function Nav() {
                 width="37"
                 height="37"
                 src="/assets/images/logo.svg"
+                alt="image"
               />
             </Link>
+          </div>
+        ) : (
+          <>
+            {providers &&
+              Object.values(providers).map((provider) => (
+                <button
+                  className="black_btn"
+                  type="button"
+                  key={provider.name}
+                  onClick={() => signIn(provider.id)}
+                >
+                  Sign in
+                </button>
+              ))}
+          </>
+        )}
+      </div>
+
+      {/* MOBILE NAVIGATION */}
+      <div className="sm:hidden flex relative">
+        {isUserLogggedIn ? (
+          <div className="flex">
+            <Image
+              className="rounded-full"
+              width="37"
+              height="37"
+              src="/assets/images/logo.svg"
+              alt="image"
+            />
           </div>
         ) : (
           <>
