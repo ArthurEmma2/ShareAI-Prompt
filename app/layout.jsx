@@ -1,28 +1,29 @@
-import  '@styles/globals.css';
-import Nav from "../components/Nav"
-import Provider from "../components/Provider"
+import "@styles/globals.css";
+import Nav from "../components/Nav";
+import Provider from "../components/Provider";
 
 export const metadata = {
-    title : "ShareAI-Prompt",
-    description : "Share your basic prompt with your friends"
-}
+  title: "ShareAI-Prompt",
+  description: "Share your basic prompt with your friends",
+};
 
-
-function RootLayout({children}) {
+function RootLayout({ children }) {
   return (
-   <html lang="en">
-    <body>
-        <div className="main">
+    <html lang="en">
+      <body>
+        <Provider>
+          <div className="main">
             <div className="gradient" />
-        </div>
-        <main className="app">
+          </div>
+          <main className="app">
             {/* <Header /> */}
-        <Nav />
+            <Nav />
             {children}
-        </main>
-    </body>
-   </html>
-  )
+          </main>
+        </Provider>
+      </body>
+    </html>
+  );
 }
 
-export default RootLayout
+export default RootLayout;
