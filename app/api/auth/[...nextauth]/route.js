@@ -1,9 +1,8 @@
-import bcrypt from "bcrypt";
-import NextAuth, { AuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 
 import { connectToDB } from "utils/database";
+import User from "models/user";
 
 const handler = NextAuth({
   providers: [
@@ -12,27 +11,34 @@ const handler = NextAuth({
       clientSecret: process.env.GITHUB_SECRET,
     }),
   ],
-  async session({ session }) {
-    try{
+  callbacks: {
+    async session({ session }) {
+      return session;
+    },
+    async signIn({ profile }) {
+      try {
+        await connectToDB();
 
-    }catch{
-      
-    }
+        const userExists = await User.findOne({
+          username: profile.username,
+        });
+
+        if (!userExists) {
+          await User.create({
+            username: profile.name.replace("", "").toLowerCase(),
+            image: profile.picture,
+          });
+        }
+
+        return true;
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    },
   },
-
-  async signIn({ profile }) {
-    try{
-      await connectToDB()
-      return true
+})
 
 
-    }catch(err){
-      console.log(err)
-      return false
-
-    }
  
-  },
-});
-
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }

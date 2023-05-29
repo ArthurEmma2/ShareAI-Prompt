@@ -1,4 +1,6 @@
-"use client";
+"use client"
+
+
 
 import Link from "next/link";
 import Image from "next/image";
@@ -6,22 +8,21 @@ import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 function Nav() {
-  const isUserLoggedIn = true;
+  const { data: session } = useSession();
   const [providers, setProviders] = useState(null);
   const [toggleDropdrown, setToggleDropdown] = useState(false);
 
   useEffect(() => {
-    const setProfileProvider = async () => {
+    const fetchProviders = async () => {
       const response = await getProviders();
-
       setProviders(response);
     };
 
-    setProfileProvider();
+    fetchProviders();
   }, []);
 
   return (
-    <nav className=" flex-between w-full mb-16 pt-3">
+    <nav className="flex-between w-full mb-16 pt-3">
       <Link href="/" className="flex gap-2 flex-center">
         <Image
           alt="image"
@@ -33,7 +34,7 @@ function Nav() {
 
       {/* MOBILE NAVIGATION */}
       <div className="sm:flex hidden">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex gap-3 md:gap-5">
             <Link href="/create-prompt" className="black_btn">
               Create Prompt
@@ -42,7 +43,6 @@ function Nav() {
               Sign Out
             </button>
             <Link className="" href="/profile">
-              {" "}
               <Image
                 className="rounded-full"
                 width="37"
@@ -75,23 +75,26 @@ function Nav() {
           </div>
         ) : (
           <>
-            {providers &&
+            {providers ? (
               Object.values(providers).map((provider) => (
                 <button
                   className="black_btn"
                   type="button"
-                  key={provider.name}
+                  key={provider.id}
                   onClick={() => signIn(provider.id)}
                 >
-                  Sign in
+                  Sign in with {provider.name}
                 </button>
-              ))}
+              ))
+            ) : (
+              <p>Loading providers...</p>
+            )}
           </>
         )}
       </div>
 
-      <div className="sm:hidden  flex relative">
-        {isUserLoggedIn ? (
+      <div className="sm:hidden flex relative">
+        {session?.user ? (
           <div className="flex">
             <Image
               className="rounded-full"
@@ -125,7 +128,7 @@ function Nav() {
                     setToggleDropdown(false);
                     signOut();
                   }}
-                  className="mt-5  w-full black_btn"
+                  className="mt-5 w-full black_btn"
                 >
                   Sign Out
                 </button>
@@ -134,17 +137,20 @@ function Nav() {
           </div>
         ) : (
           <>
-            {providers &&
+            {providers ? (
               Object.values(providers).map((provider) => (
                 <button
                   className="black_btn"
                   type="button"
-                  key={provider.name}
+                  key={provider.id}
                   onClick={() => signIn(provider.id)}
                 >
-                  Sign in
+                  Sign in with {provider.name}
                 </button>
-              ))}
+              ))
+            ) : (
+              <p>Loading providers...</p>
+            )}
           </>
         )}
       </div>
