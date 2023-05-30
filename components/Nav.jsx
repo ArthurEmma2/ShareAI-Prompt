@@ -1,6 +1,4 @@
-"use client"
-
-
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -21,6 +19,8 @@ function Nav() {
     fetchProviders();
   }, []);
 
+  console.log(session);
+
   return (
     <nav className="flex-between w-full mb-16 pt-3">
       <Link href="/" className="flex gap-2 flex-center">
@@ -31,7 +31,6 @@ function Nav() {
           src="/assets/images/logo.svg"
         />
       </Link>
-
       {/* MOBILE NAVIGATION */}
       <div className="sm:flex hidden">
         {session?.user ? (
@@ -75,20 +74,19 @@ function Nav() {
           </div>
         ) : (
           <>
-            {providers ? (
+            {providers &&
               Object.values(providers).map((provider) => (
                 <button
-                  className="black_btn"
                   type="button"
-                  key={provider.id}
-                  onClick={() => signIn(provider.id)}
+                  key={provider.name}
+                  onClick={() => {
+                    signIn(provider.id);
+                  }}
+                  className="black_btn"
                 >
-                  Sign in with {provider.name}
+                  Sign in
                 </button>
-              ))
-            ) : (
-              <p>Loading providers...</p>
-            )}
+              ))}
           </>
         )}
       </div>
@@ -137,20 +135,19 @@ function Nav() {
           </div>
         ) : (
           <>
-            {providers ? (
+            {providers &&
               Object.values(providers).map((provider) => (
                 <button
-                  className="black_btn"
                   type="button"
-                  key={provider.id}
-                  onClick={() => signIn(provider.id)}
+                  key={provider.name}
+                  onClick={() => {
+                    signIn(provider.id);
+                  }}
+                  className="black_btn"
                 >
-                  Sign in with {provider.name}
+                  Sign in
                 </button>
-              ))
-            ) : (
-              <p>Loading providers...</p>
-            )}
+              ))}
           </>
         )}
       </div>
