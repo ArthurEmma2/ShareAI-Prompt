@@ -46,7 +46,7 @@ function Nav() {
                 className="rounded-full"
                 width="37"
                 height="37"
-                src="/assets/images/logo.svg"
+                src={session?.user.image}
                 alt="image"
               />
               {toggleDropdrown && (
@@ -98,7 +98,7 @@ function Nav() {
               className="rounded-full"
               width="37"
               height="37"
-              src="/assets/images/logo.svg"
+              src={session?.user.image}
               alt="image"
               onClick={() => setToggleDropdown((prev) => !prev)}
             />
