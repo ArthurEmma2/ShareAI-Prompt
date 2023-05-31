@@ -11,6 +11,22 @@ function CreatePrompt() {
     prompt: "",
     tag: "",
   });
+
+  const createPrompt = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("api/prompt/new", {
+        method: "POST",
+        body: JSON.stringify({
+          prompt: post.prompt,
+        }),
+      });
+    } catch (err) {
+      console.log(err);
+    }
+
+    setSubmitting(true);
+  };
   return (
     <>
       <Form
@@ -18,9 +34,8 @@ function CreatePrompt() {
         post={post}
         setPost={setPost}
         submitting={submitting}
-        // handleSubmit={createPrompt}
+        handleSubmit={createPrompt}
       />
-      <div>CreatePrompt</div>
     </>
   );
 }
