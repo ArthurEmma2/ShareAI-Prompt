@@ -31,6 +31,8 @@ function CreatePrompt() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      submitting(false);
     }
 
     setSubmitting(true);
