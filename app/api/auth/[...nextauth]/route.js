@@ -19,15 +19,17 @@ const handler = NextAuth({
       try {
         await connectToDB();
 
-        const userExists = await User.findOne({
-          username: profile.username,
-        });
+        const userExists = await User.findOne({ username: profile.username });
 
         if (!userExists) {
           await User.create({
             username: profile.name.replace("", "").toLowerCase(),
-            image: profile.picture,
+            image: profile.avatar_url, // Save the avatar URL as the image
           });
+        } else {
+          // Update the image if the user already exists
+          userExists.image = profile.avatar_url; // Assign the new avatar URL
+          await userExists.save();
         }
 
         return true;
@@ -37,8 +39,6 @@ const handler = NextAuth({
       }
     },
   },
-})
+});
 
-
- 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };
