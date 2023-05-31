@@ -20,7 +20,15 @@ function Form({ type, post, setPost, submitting, handleSubmit }) {
             Your AI prompt
           </span>
 
-          <textarea value={post.prompt}></textarea>
+          <textarea
+            value={post.prompt}
+            onChange={(e) =>
+              setPost({
+                ...post,
+                prompt: e.target.value,
+              })
+            }
+          ></textarea>
         </label>
       </form>
     </section>
