@@ -20,7 +20,7 @@ function Form({ type, post, setPost, submitting, handleSubmit }) {
             Your AI prompt
           </span>
 
-          <textarea></textarea>
+          <textarea value={post.prompt}></textarea>
         </label>
       </form>
     </section>
