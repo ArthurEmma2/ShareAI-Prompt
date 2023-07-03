@@ -94,14 +94,14 @@ function Nav() {
       <div className="sm:hidden flex relative">
         {session?.user ? (
           <div className="flex">
-            <Image
+            {/* <Image
               className="rounded-full"
               width="50"
               height="47"
               src={session?.user.image}
               alt="image"
               onClick={() => setToggleDropdown((prev) => !prev)}
-            />
+            /> */}
 
             {toggleDropdrown && (
               <div className="dropdown">

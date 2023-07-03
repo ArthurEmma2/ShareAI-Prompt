@@ -7,6 +7,7 @@ import Form from "components/Form";
 import { RouteHandlerManager } from "next/dist/server/future/route-handler-managers/route-handler-manager";
 
 function CreatePrompt() {
+  const { data:session}  =  useSession()
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [post, setPost] = useState({

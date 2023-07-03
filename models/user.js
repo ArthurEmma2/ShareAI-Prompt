@@ -7,8 +7,8 @@ const UserSchema = new Schema({
     unique: [true, "Username already exist"],
   },
   image: {
-    type: String,
-  },
+    type: String
+  }
 });
 
 const User = models.User || model("User", UserSchema);
