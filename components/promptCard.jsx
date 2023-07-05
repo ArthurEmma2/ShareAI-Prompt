@@ -1,9 +1,12 @@
-import React from 'react'
+import React from 'react';
 
-function promptCard() {
+function PromptCard({ post }) {
   return (
-    <div>promptCard</div>
-  )
+    <div className="prompt-card">
+      <h3>{post.tag}</h3>
+      <h3>{post.prompt}</h3>
+    </div>
+  );
 }
 
-export default promptCard
+export default PromptCard;
