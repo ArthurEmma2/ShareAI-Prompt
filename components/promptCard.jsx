@@ -9,4 +9,7 @@ function PromptCard({ post }) {
   );
 }
 
+
+
+
 export default PromptCard;
