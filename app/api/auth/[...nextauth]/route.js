@@ -19,20 +19,24 @@ const handler = NextAuth({
       try {
         await connectToDB();
 
-        const userExists = await User.findOne({ username: profile.username });
+        // Check if the user already exists based on the GitHub username
+        const existingUser = await User.findOne({
+          username: profile.name.replace("", "").toLowerCase(),
+        });
 
-        if (!userExists) {
+        if (existingUser) {
+          // User already exists, sign them in
+          return true;
+        } else {
+          // User does not exist, create a new user
           await User.create({
             username: profile.name.replace("", "").toLowerCase(),
             image: profile.avatar_url, // Save the avatar URL as the image
           });
-        } else {
-          // Update the image if the user already exists
-          userExists.image = profile.avatar_url; // Assign the new avatar URL
-          await userExists.save();
-        }
 
-        return true;
+          // Sign in the newly created user
+          return true;
+        }
       } catch (err) {
         console.log(err);
         return false;

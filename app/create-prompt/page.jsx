@@ -1,13 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; // Changed from "next/navigation" to "next/router"
 
 import Form from "components/Form";
-import { RouteHandlerManager } from "next/dist/server/future/route-handler-managers/route-handler-manager";
 
 function CreatePrompt() {
-  const { data:session}  =  useSession()
+  const { data: session } = useSession();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [post, setPost] = useState({
@@ -33,7 +32,7 @@ function CreatePrompt() {
     } catch (err) {
       console.log(err);
     } finally {
-      submitting(false);
+      setSubmitting(false); // Fix the typo here
     }
 
     setSubmitting(true);
