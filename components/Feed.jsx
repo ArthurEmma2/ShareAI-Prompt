@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import PromptCard from "../components/promptCard";
+import PromptCard from "../components/PromptCard";
 
 const PromptCardList = ({ data, handleTagClick }) => {
   return (
@@ -15,9 +15,32 @@ const PromptCardList = ({ data, handleTagClick }) => {
 function Feed() {
   const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+
   const handleSearchChange = (e) => {
-    e.preventDefault();
+    setSearchText(e.target.value);
   };
+
+  useEffect(() => {
+    const filterPosts = () => {
+      const filtered = posts.filter((post) => {
+        if (!post) return false; // Check if post is defined
+
+        const tagMatch = post.tag
+          ?.toLowerCase()
+          .includes(searchText.toLowerCase());
+        const usernameMatch = post.username
+          ? post.username.toLowerCase().includes(searchText.toLowerCase())
+          : false;
+
+        return tagMatch || usernameMatch;
+      });
+      setFilteredPosts(filtered);
+    };
+
+    filterPosts();
+  }, [searchText, posts]);
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -35,12 +58,13 @@ function Feed() {
       console.error("Unhandled error during fetchPosts:", error);
     });
   }, []);
+
   return (
     <section className="feed">
       <form className="relative w-full  flex-center">
         <input
           type="text"
-          placeholder="search for a tag or username"
+          placeholder="Search for a tag or username"
           value={searchText}
           onChange={handleSearchChange}
           required
@@ -48,7 +72,7 @@ function Feed() {
         />
       </form>
 
-      <PromptCardList data={posts} handleTagClick={() => {}} />
+      <PromptCardList data={filteredPosts} handleTagClick={() => {}} />
     </section>
   );
 }
