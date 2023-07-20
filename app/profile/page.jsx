@@ -13,12 +13,13 @@ const MyProfile = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // if (!session?.user.id) return router.push("/");
+    if (!session?.user.id) return router.push("/");
     const fetchPosts = async () => {
       setLoading(true);
       const response = await fetch(`/api/users/${session.user.id}/posts`);
       console.log(session.user.id);
       const data = await response.json();
+      console.log(data);
       setLoading(false);
       setMyPosts(data);
     };
@@ -49,7 +50,7 @@ const MyProfile = () => {
       <Profile
         name="My"
         desc="Welcome to your personalized profile page!"
-        // data={myPosts}
+        data={myPosts}
         // handleEdit={handleEdit}
         // handleDelete={handleDelete}
       />
