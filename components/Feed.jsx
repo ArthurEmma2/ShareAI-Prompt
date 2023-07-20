@@ -46,6 +46,7 @@ function Feed() {
       try {
         const response = await fetch("/api/prompt");
         const data = await response.json();
+        console.log(data);
         setPosts(data);
       } catch (error) {
         // Handle the error here

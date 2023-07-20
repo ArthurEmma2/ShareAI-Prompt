@@ -17,12 +17,14 @@ function CreatePrompt() {
   const createPrompt = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("api/prompt/new", {
+      const response = await fetch("/api/prompt/new", {
         method: "POST",
         body: JSON.stringify({
           prompt: post.prompt,
           userId: session?.user.id,
           tag: post.tag,
+          image: session?.user.image,
+          username: session?.user.name,
         }),
       });
 

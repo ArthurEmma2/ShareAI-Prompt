@@ -19,27 +19,39 @@ const handler = NextAuth({
       try {
         await connectToDB();
 
-        // Check if the user already exists based on the GitHub username
+        // Check if the user already exists based on the GitHub user ID
         const existingUser = await User.findOne({
-          username: profile.name.replace("", "").toLowerCase(),
+          userId: profile.id,
         });
 
         if (existingUser) {
           // User already exists, sign them in
-          return true;
+          return {
+            success: true,
+            message: "User found and signed in",
+            user: existingUser,
+          };
         } else {
           // User does not exist, create a new user
-          await User.create({
+          const newUser = await User.create({
+            userId: profile.id, // Use GitHub user ID to uniquely identify the user
             username: profile.name.replace("", "").toLowerCase(),
             image: profile.avatar_url, // Save the avatar URL as the image
           });
 
           // Sign in the newly created user
-          return true;
+          return {
+            success: true,
+            message: "New user created and signed in",
+            user: newUser,
+          };
         }
       } catch (err) {
         console.log(err);
-        return false;
+        return {
+          success: false,
+          message: "Error occurred while signing in",
+        };
       }
     },
   },
