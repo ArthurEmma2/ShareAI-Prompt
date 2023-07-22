@@ -4,8 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
+import nanoid from "nanoid";
 
-const PromptCard = ({ post, handleTagClick }) => {
+const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
   const { data: session } = useSession();
   const pathName = usePathname();
 
@@ -13,9 +14,10 @@ const PromptCard = ({ post, handleTagClick }) => {
   const [copied, setCopied] = useState("");
 
   const handleProfileClick = () => {
+    console.log(post.creator._id);
     if (post.creator === session?.user.id) return router.push("/profile");
 
-    router.push(`/profile/${post.creator}?name=${post.username}`);
+    router.push(`/profile/${post.creator._id}?name=${post.username}`);
   };
 
   const handleCopy = () => {
@@ -47,12 +49,25 @@ const PromptCard = ({ post, handleTagClick }) => {
             </h3>
           </div>
         </div>
+        <div className="copy_btn " onClick={handleCopy}>
+          <Image
+            src={
+              copied === post.prompt
+                ? "/assets/icons/tick.svg"
+                : "/assets/icons/copy.svg"
+            }
+            width={12}
+            height={12}
+            alt="icon"
+          />
+        </div>
       </div>
       <p className="my-4 font-satoshi text-sm text-gray-700">{post.prompt}</p>
       <div className="wrapper">
         {stringOfTags.map((tag) => {
           return (
             <p
+              key={tag.tag}
               className="font-inter text-sm blue_gradient cursor-pointer tag"
               onClick={() => handleTagClick && handleTagClick(tag)}
             >
@@ -61,24 +76,22 @@ const PromptCard = ({ post, handleTagClick }) => {
           );
         })}
       </div>
-      {/* {session?.user.id === post.creator?._id && pathName === "/profile" && (
+      {session?.user.id === post.creator?._id && pathName === "/profile" && (
         <div className="mt-5 flex-center gap-4 border-t border-gray-100 pt-3">
           <button
             type="button"
             className="font-inter text-sm cursor-pointer bg-white btn"
-            onClick={handleEdit}
           >
             Edit
           </button>
           <button
             type="button"
             className="font-inter text-sm cursor-pointer btn"
-            onClick={handleDelete}
           >
             Delete
           </button>
         </div>
-      )} */}
+      )}
     </div>
   );
 };

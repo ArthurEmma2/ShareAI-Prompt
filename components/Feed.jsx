@@ -6,7 +6,11 @@ const PromptCardList = ({ data, handleTagClick }) => {
   return (
     <div className="mt-6 prompt_layout">
       {data.map((post) => (
-        <PromptCard key={post.id} post={post} handleTagClick={handleTagClick} />
+        <PromptCard
+          key={post._id}
+          post={post}
+          handleTagClick={handleTagClick}
+        />
       ))}
     </div>
   );
@@ -46,7 +50,6 @@ function Feed() {
       try {
         const response = await fetch("/api/prompt");
         const data = await response.json();
-        console.log(data);
         setPosts(data);
       } catch (error) {
         // Handle the error here
@@ -73,7 +76,11 @@ function Feed() {
         />
       </form>
 
-      <PromptCardList data={filteredPosts} handleTagClick={() => {}} />
+      <PromptCardList
+        key={posts._id}
+        data={filteredPosts}
+        handleTagClick={() => {}}
+      />
     </section>
   );
 }

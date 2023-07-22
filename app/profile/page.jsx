@@ -12,16 +12,14 @@ const MyProfile = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(`/api/users/${session?.user?.id}/posts`);
     const fetchPosts = async () => {
+      console.log(session);
       if (!session?.user?.id) {
-        // Redirect to the homepage if the user is not authenticated
         return router.push("/");
       }
 
       setLoading(true);
-      const response = await fetch(`/api/users/${session.user.id}/posts`);
-      console.log(session?.user?.id);
+      const response = await fetch(`/api/users/${session.user?.id}/posts`);
       const data = await response.json();
       console.log(data);
       setLoading(false);
