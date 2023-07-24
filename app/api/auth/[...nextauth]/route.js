@@ -21,7 +21,7 @@ const handler = NextAuth({
 
         // Check if the user already exists based on the GitHub user ID
         const existingUser = await User.findOne({
-          userId: profile.id,
+          userId: profile.id.toString(),
         });
 
         if (existingUser) {
@@ -29,21 +29,31 @@ const handler = NextAuth({
           return {
             success: true,
             message: "User found and signed in",
-            user: existingUser,
+            user: {
+              _id: existingUser._id.toString(),
+              userId: profile.id,
+              username: profile.name.replace("", "").toLowerCase(),
+              image: profile.avatar_url,
+            },
           };
         } else {
           // User does not exist, create a new user
           const newUser = await User.create({
-            userId: profile.id, // Use GitHub user ID to uniquely identify the user
+            userId: profile.id,
             username: profile.name.replace("", "").toLowerCase(),
-            image: profile.avatar_url, // Save the avatar URL as the image
+            image: profile.avatar_url,
           });
 
           // Sign in the newly created user
           return {
             success: true,
             message: "New user created and signed in",
-            user: newUser,
+            user: {
+              _id: newUser._id,
+              userId: profile.id,
+              username: profile.name.replace("", "").toLowerCase(),
+              image: profile.avatar_url,
+            },
           };
         }
       } catch (err) {
