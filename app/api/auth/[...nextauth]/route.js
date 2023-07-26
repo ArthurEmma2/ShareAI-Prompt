@@ -21,7 +21,7 @@ const handler = NextAuth({
 
         // Check if the user already exists based on the GitHub user ID
         const existingUser = await User.findOne({
-          userId: profile.id.toString(),
+          userId: profile.id.toString,
         });
 
         if (existingUser) {
