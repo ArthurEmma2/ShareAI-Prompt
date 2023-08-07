@@ -9,7 +9,6 @@ function Nav() {
   const { data: session } = useSession();
   const [providers, setProviders] = useState(null);
   const [toggleDropdrown, setToggleDropdown] = useState(false);
-  console.log(session);
   useEffect(() => {
     const fetchProviders = async () => {
       const response = await getProviders();

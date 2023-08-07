@@ -4,18 +4,22 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"; // Changed from "next/navigation" to "next/router"
 
 import Form from "components/Form";
-
-function CreatePrompt() {
-  const { data: session } = useSession();
+const CreatePrompt = () => {
   const router = useRouter();
+  const { data: session } = useSession();
+
   const [submitting, setSubmitting] = useState(false);
   const [post, setPost] = useState({
     prompt: "",
     tag: "",
+    image: "",
+    username: "",
   });
 
   const createPrompt = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+
     try {
       const response = await fetch("/api/prompt/new", {
         method: "POST",
@@ -25,31 +29,29 @@ function CreatePrompt() {
           tag: post.tag,
           image: session?.user.image,
           username: session?.user.name,
+          email: session?.user.email,
         }),
       });
 
       if (response.ok) {
         router.push("/");
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     } finally {
-      setSubmitting(false); // Fix the typo here
+      setSubmitting(false);
     }
-
-    setSubmitting(true);
   };
+
   return (
-    <>
-      <Form
-        type="create"
-        post={post}
-        setPost={setPost}
-        submitting={submitting}
-        handleSubmit={createPrompt}
-      />
-    </>
+    <Form
+      type="Create"
+      post={post}
+      setPost={setPost}
+      submitting={submitting}
+      handleSubmit={createPrompt}
+    />
   );
-}
+};
 
 export default CreatePrompt;

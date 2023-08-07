@@ -13,18 +13,17 @@ const UserProfile = ({ params }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(params?.id.toString());
     const fetchPosts = async () => {
       setLoading(true);
-      const response = await fetch(`/api/users/${params.id}/posts`); // <-- Use params.user.id here
+      const response = await fetch(`/api/users/${params?.id}/posts`);
       const data = await response.json();
       setLoading(false);
 
       setUserPosts(data);
     };
 
-    if (params.id) fetchPosts(); // <-- Use params.user.id here
-  }, [params.id]); // <-- Use params.user.id here
+    if (params?.id) fetchPosts();
+  }, [params.id]);
 
   return (
     <>
