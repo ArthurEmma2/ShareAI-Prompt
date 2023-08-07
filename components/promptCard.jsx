@@ -1,21 +1,23 @@
-"use client";
-
 import { useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import nanoid from "nanoid";
+import { getSession } from "next-auth/react";
 
 const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
-  const { data: session } = useSession();
+  const session = useSession().data; // Use useSession hook to access the session data
+  const [copied, setCopied] = useState("");
+  const router = useRouter();
   const pathName = usePathname();
 
-  const router = useRouter();
-  const [copied, setCopied] = useState("");
   const handleProfileClick = () => {
-    if (post.creator._id === session?.user.id) return router.push("/profile");
+    const isCurrentUser = post.creator === session?.user.id;
 
-    router.push(`/profile/${post.creator._id}?name=${post.username}`);
+    if (isCurrentUser) {
+      router.push("/profile");
+    } else {
+      router.push(`/profile/${post.creator}?name=${post.username}`);
+    }
   };
 
   const handleCopy = () => {
@@ -26,6 +28,9 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
   };
 
   const stringOfTags = post.tag.split(",");
+
+  const isCurrentUserPost = session?.user.id === post.creator?._id;
+  const isProfilePage = pathName === "/profile";
 
   return (
     <div className="prompt_card">
@@ -49,11 +54,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
         </div>
         <div className="copy_btn " onClick={handleCopy}>
           <Image
-            src={
-              copied === post.prompt
-                ? "/assets/icons/tick.svg"
-                : "/assets/icons/copy.svg"
-            }
+            src={copied ? "/assets/icons/tick.svg" : "/assets/icons/copy.svg"}
             width={12}
             height={12}
             alt="icon"
@@ -62,29 +63,29 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
       </div>
       <p className="my-4 font-satoshi text-sm text-gray-700">{post.prompt}</p>
       <div className="wrapper">
-        {stringOfTags.map((tag) => {
-          return (
-            <p
-              key={tag.tag}
-              className="font-inter text-sm blue_gradient cursor-pointer tag"
-              onClick={() => handleTagClick && handleTagClick(tag)}
-            >
-              {tag}
-            </p>
-          );
-        })}
+        {stringOfTags.map((tag) => (
+          <p
+            key={tag.tag}
+            className="font-inter text-sm blue_gradient cursor-pointer tag"
+            onClick={() => handleTagClick && handleTagClick(tag)}
+          >
+            {tag}
+          </p>
+        ))}
       </div>
-      {session?.user.id === creator?._id && pathName === "/profile" && (
+      {isCurrentUserPost && isProfilePage && (
         <div className="mt-5 flex-center gap-4 border-t border-gray-100 pt-3">
           <button
             type="button"
             className="font-inter text-sm cursor-pointer bg-white btn"
+            onClick={handleEdit}
           >
             Edit
           </button>
           <button
             type="button"
             className="font-inter text-sm cursor-pointer btn"
+            onClick={handleDelete}
           >
             Delete
           </button>
@@ -93,5 +94,15 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
     </div>
   );
 };
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  return {
+    props: {
+      session: session || null,
+    },
+  };
+}
 
 export default PromptCard;

@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import PromptCard from "../components/PromptCard";
+const project = "promptopia";
 
 const PromptCardList = ({ data, handleTagClick }) => {
   return (
-    <div className="mt-6 prompt_layout">
+    <div className="mt-10 prompt_layout">
       {data.map((post) => (
         <PromptCard
           key={post._id}
@@ -16,73 +17,86 @@ const PromptCardList = ({ data, handleTagClick }) => {
   );
 };
 
-function Feed() {
+const Feed = () => {
   const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
-
-  const handleSearchChange = (e) => {
-    setSearchText(e.target.value);
-  };
-
-  useEffect(() => {
-    const filterPosts = () => {
-      const filtered = posts.filter((post) => {
-        if (!post) return false; // Check if post is defined
-
-        const tagMatch = post.tag
-          ?.toLowerCase()
-          .includes(searchText.toLowerCase());
-        const usernameMatch = post.username
-          ? post.username.toLowerCase().includes(searchText.toLowerCase())
-          : false;
-
-        return tagMatch || usernameMatch;
-      });
-      setFilteredPosts(filtered);
-    };
-
-    filterPosts();
-  }, [searchText, posts]);
-
+  const [loading, setLoading] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [searchedResults, setSearchedResults] = useState([]);
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch("/api/prompt");
+        setLoading(true);
+        const response = await fetch(`/api/prompts/${project}/prompts`, {
+          method: "GET",
+          cache: "no-cache",
+          next: { revalidate: 60 },
+        });
+
         const data = await response.json();
+
         setPosts(data);
+        setLoading(false);
       } catch (error) {
-        // Handle the error here
-        console.error("Error fetching posts:", error);
+        console.log(error);
       }
     };
 
-    fetchPosts().catch((error) => {
-      // Handle any uncaught errors here
-      console.error("Unhandled error during fetchPosts:", error);
-    });
+    fetchPosts();
   }, []);
+
+  const filterPrompts = (searchtext) => {
+    const regex = new RegExp(searchtext, "i");
+    return posts.filter(
+      (item) =>
+        regex.test(item.username) ||
+        regex.test(item.tag) ||
+        regex.test(item.prompt)
+    );
+  };
+
+  const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout);
+    setSearchText(e.target.value);
+
+    setSearchTimeout(
+      setTimeout(() => {
+        const searchResult = filterPrompts(e.target.value);
+        setSearchedResults(searchResult);
+      }, 500)
+    );
+  };
+
+  const handleTagClick = (tagName) => {
+    setSearchText(tagName);
+
+    const searchResult = filterPrompts(tagName);
+    setSearchedResults(searchResult);
+  };
 
   return (
     <section className="feed">
-      <form className="relative w-full  flex-center">
+      <form className="relative w-full flex-center">
         <input
           type="text"
-          placeholder="Search for a tag or username"
+          placeholder="Search for a word, a tag or a username"
           value={searchText}
           onChange={handleSearchChange}
           required
           className="search_input peer"
         />
       </form>
-
-      <PromptCardList
-        key={posts._id}
-        data={filteredPosts}
-        handleTagClick={() => {}}
-      />
+      {loading && <div>Loading</div>}
+      {searchText ? (
+        <PromptCardList
+          data={searchedResults}
+          handleTagClick={handleTagClick}
+        />
+      ) : (
+        <PromptCardList data={posts} handleTagClick={handleTagClick} />
+      )}
     </section>
   );
-}
+};
 
 export default Feed;

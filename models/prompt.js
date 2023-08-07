@@ -21,6 +21,10 @@ const PromptSchema = new Schema({
     type: String,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+  },
 });
 
 const Prompt = models.Prompt || model("Prompt", PromptSchema);
