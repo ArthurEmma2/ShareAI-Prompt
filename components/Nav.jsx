@@ -21,12 +21,7 @@ function Nav() {
   return (
     <nav className="flex-between w-full mb-16 pt-3">
       <Link href="/" className="flex gap-2 flex-center">
-        <Image
-          alt="image"
-          width="30"
-          height="20"
-          src="/assets/images/logo.svg"
-        />
+        ShareAIprompt
       </Link>
       {/* MOBILE NAVIGATION */}
       <div className="sm:flex hidden">
@@ -71,19 +66,25 @@ function Nav() {
           </div>
         ) : (
           <>
-            {providers &&
-              Object.values(providers).map((provider) => (
-                <button
-                  type="button"
-                  key={provider.name}
-                  onClick={() => {
-                    signIn(provider.id);
-                  }}
-                  className="black_btn"
-                >
-                  Sign in
-                </button>
-              ))}
+            <ul className="flex text-center gap-5 ">
+              <li>Blog</li>
+              <li>Prompts</li>
+              <li>Contact Us</li>
+
+              {providers &&
+                Object.values(providers).map((provider) => (
+                  <button
+                    type="button"
+                    key={provider.name}
+                    onClick={() => {
+                      signIn(provider.id);
+                    }}
+                    className=""
+                  >
+                    Sign in
+                  </button>
+                ))}
+            </ul>
           </>
         )}
       </div>
@@ -91,14 +92,14 @@ function Nav() {
       <div className="sm:hidden flex relative">
         {session?.user ? (
           <div className="flex">
-            {/* <Image
+            <Image
               className="rounded-full"
               width="50"
               height="47"
               src={session?.user.image}
               alt="image"
               onClick={() => setToggleDropdown((prev) => !prev)}
-            /> */}
+            />
 
             {toggleDropdrown && (
               <div className="dropdown">

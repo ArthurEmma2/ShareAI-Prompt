@@ -1,15 +1,48 @@
+"use client";
+
 import { useState } from "react";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { useSession } from "next-auth/react"; // Corrected import
 import { usePathname, useRouter } from "next/navigation";
-import { getSession } from "next-auth/react";
 
 const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
-  const session = useSession().data; // Use useSession hook to access the session data
   const [copied, setCopied] = useState("");
+  const { data: session } = useSession();
   const router = useRouter();
   const pathName = usePathname();
+  const [likes, setLikes] = useState(0);
 
+  console.log("my session :", session);
+  const handleLikeClick = async () => {
+    if (!session) {
+      console.error("User is not authenticated");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/likes/${post._id}/prompt`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action: "like" }), // Add this line to specify the action
+      });
+
+      if (response.ok) {
+        const updatedLikes = await response.json();
+        console.log("Updated Likes:", updatedLikes);
+        setLikes(updatedLikes.likes); // Update likes with the correct property name
+      } else {
+        const errorMessage = await response.text();
+        console.error("Failed to update like status:", errorMessage);
+      }
+    } catch (error) {
+      console.error("Error updating likes:", error);
+      return new Response("Error updating likes: " + error.message, {
+        status: 500,
+      });
+    }
+  };
   const handleProfileClick = () => {
     const isCurrentUser = post.creator === session?.user.id;
 
@@ -52,7 +85,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
             </h3>
           </div>
         </div>
-        <div className="copy_btn " onClick={handleCopy}>
+        <div className="copy_btn" onClick={handleCopy}>
           <Image
             src={copied ? "/assets/icons/tick.svg" : "/assets/icons/copy.svg"}
             width={12}
@@ -60,7 +93,17 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
             alt="icon"
           />
         </div>
+        <div className="vote_btn cursor-pointer" onClick={handleLikeClick}>
+          <Image
+            src="/assets/icons/love.svg"
+            width={12}
+            height={12}
+            alt="like icon"
+          />
+          <span>{likes}</span>
+        </div>
       </div>
+
       <p className="my-4 font-satoshi text-sm text-gray-700">{post.prompt}</p>
       <div className="wrapper">
         {stringOfTags.map((tag) => (

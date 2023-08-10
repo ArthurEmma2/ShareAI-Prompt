@@ -1,9 +1,14 @@
 "use client";
-import { useState, useEffect } from "react";
-import PromptCard from "../components/PromptCard";
+import React, { useState, useEffect } from "react";
+import PromptCard from "../../components/promptCard";
+
 const project = "SharePrompt";
 
-const PromptCardList = ({ data, handleTagClick }) => {
+function PromptCardList({ data, handleTagClick }) {
+  if (!data) {
+    return null; // Return null if data is not available yet
+  }
+
   return (
     <div className="mt-10 prompt_layout">
       {data.map((post) => (
@@ -15,18 +20,20 @@ const PromptCardList = ({ data, handleTagClick }) => {
       ))}
     </div>
   );
-};
+}
 
-const Feed = () => {
-  const [searchText, setSearchText] = useState("");
-  const [posts, setPosts] = useState([]);
+function Prompts({ initialPosts, handleTagClick }) {
+  const [posts, setPosts] = useState(initialPosts);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [searchedResults, setSearchedResults] = useState([]);
+
   useEffect(() => {
     const fetchPosts = async () => {
+      setLoading(true);
+
       try {
-        setLoading(true);
         const response = await fetch(`/api/prompts/${project}/prompts`, {
           method: "GET",
           cache: "no-cache",
@@ -36,17 +43,18 @@ const Feed = () => {
         const data = await response.json();
 
         setPosts(data);
-        setLoading(false);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching posts:", error);
       }
+
+      setLoading(false);
     };
 
     fetchPosts();
   }, []);
 
-  const filterPrompts = (searchtext) => {
-    const regex = new RegExp(searchtext, "i");
+  const filterPrompts = (searchText) => {
+    const regex = new RegExp(searchText, "i");
     return posts.filter(
       (item) =>
         regex.test(item.username) ||
@@ -56,47 +64,62 @@ const Feed = () => {
   };
 
   const handleSearchChange = (e) => {
+    const newValue = e.target.value;
+
+    setSearchText(newValue);
+
     clearTimeout(searchTimeout);
-    setSearchText(e.target.value);
 
     setSearchTimeout(
       setTimeout(() => {
-        const searchResult = filterPrompts(e.target.value);
+        const searchResult = filterPrompts(newValue);
         setSearchedResults(searchResult);
       }, 500)
     );
   };
 
-  const handleTagClick = (tagName) => {
-    setSearchText(tagName);
-
-    const searchResult = filterPrompts(tagName);
-    setSearchedResults(searchResult);
-  };
+  const promptListData = searchText ? searchedResults : posts;
 
   return (
-    <section className="feed">
-      <form className="relative w-full flex-center">
+    <div>
+      <form>
         <input
           type="text"
           placeholder="Search for a word, a tag or a username"
           value={searchText}
           onChange={handleSearchChange}
-          required
           className="search_input peer"
         />
       </form>
-      {loading && <div>Loading</div>}
-      {searchText ? (
-        <PromptCardList
-          data={searchedResults}
-          handleTagClick={handleTagClick}
-        />
-      ) : (
-        <PromptCardList data={posts} handleTagClick={handleTagClick} />
-      )}
-    </section>
+      <PromptCardList data={promptListData} handleTagClick={handleTagClick} />
+    </div>
   );
-};
+}
 
-export default Feed;
+export async function getServerSideProps() {
+  try {
+    const response = await fetch(`/api/prompts/${project}/prompts`, {
+      method: "GET",
+      cache: "no-cache",
+      next: { revalidate: 60 },
+    });
+
+    const initialPosts = await response.json();
+
+    return {
+      props: {
+        initialPosts,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching initial posts:", error);
+
+    return {
+      props: {
+        initialPosts: [],
+      },
+    };
+  }
+}
+
+export default Prompts;
