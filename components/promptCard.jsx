@@ -15,7 +15,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
   console.log("my session :", session);
   const handleLikeClick = async () => {
     if (!session) {
-      console.error("User is not authenticated");
+      console.error("User not authenticated");
       return;
     }
 
