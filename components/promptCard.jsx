@@ -13,35 +13,35 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
   const [likes, setLikes] = useState(0);
 
   console.log("my session :", session);
-  const handleLikeClick = async () => {
-    if (!session) {
-      console.error("User not authenticated");
-      return;
-    }
+  // const handleLikeClick = async () => {
+  //   if (!session) {
+  //     console.error("User not authenticated");
+  //     return;
+  //   }
 
-    try {
-      const response = await fetch(`/api/likes/${post._id}/prompt`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ action: "like" }), // Add this line to specify the action
-      });
+  //   try {
+  //     const response = await fetch(`/api/likes/${post._id}/prompt`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ action: "like" }), // Add this line to specify the action
+  //     });
 
-      if (response.ok) {
-        const updatedLikes = await response.json();
-        console.log("Updated Likes:", updatedLikes);
-        setLikes(updatedLikes.likes); // Update likes with the correct property name
-      } else {
-        const errorMessage = await response.text();
-        console.error("Failed to update like status:", errorMessage);
-      }
-    } catch (error) {
-      console.error("Error updating likes:", error);
-      return new Response("Error updating likes: " + error.message, {
-        status: 500,
-      });
-    }
+  //     if (response.ok) {
+  //       const updatedLikes = await response.json();
+  //       console.log("Updated Likes:", updatedLikes);
+  //       setLikes(updatedLikes.likes); // Update likes with the correct property name
+  //     } else {
+  //       const errorMessage = await response.text();
+  //       console.error("Failed to update like status:", errorMessage);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating likes:", error);
+  //     return new Response("Error updating likes: " + error.message, {
+  //       status: 500,
+  //     });
+  //   }
   };
   const handleProfileClick = () => {
     const isCurrentUser = post.creator === session?.user.id;
@@ -93,7 +93,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
             alt="icon"
           />
         </div>
-        <div className="vote_btn cursor-pointer" onClick={handleLikeClick}>
+        {/* <div className="vote_btn cursor-pointer" onClick={handleLikeClick}>
           <Image
             src="/assets/icons/love.svg"
             width={12}
@@ -101,7 +101,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
             alt="like icon"
           />
           <span>{likes}</span>
-        </div>
+        </div> */}
       </div>
 
       <p className="my-4 font-satoshi text-sm text-gray-700">{post.prompt}</p>
@@ -149,3 +149,18 @@ export async function getServerSideProps(context) {
 }
 
 export default PromptCard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
