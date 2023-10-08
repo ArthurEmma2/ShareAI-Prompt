@@ -25,7 +25,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
   //       headers: {
   //         "Content-Type": "application/json",
   //       },
-  //       body: JSON.stringify({ action: "like" }), // Add this line to specify the action
+  //       body: JSON.stringify({ action: "like" }),
   //     });
 
   //     if (response.ok) {
@@ -42,7 +42,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
   //       status: 500,
   //     });
   //   }
-  };
+  // };
   const handleProfileClick = () => {
     const isCurrentUser = post.creator === session?.user.id;
 
@@ -149,18 +149,3 @@ export async function getServerSideProps(context) {
 }
 
 export default PromptCard;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
