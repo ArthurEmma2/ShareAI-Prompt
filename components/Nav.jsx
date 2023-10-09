@@ -4,11 +4,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import Button from "@mui/material/Button";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
 
 function Nav() {
   const { data: session } = useSession();
   const [providers, setProviders] = useState(null);
-  const [toggleDropdrown, setToggleDropdown] = useState(false);
+  const [toggleDropdown, setToggleDropdown] = useState(false);
+
   useEffect(() => {
     const fetchProviders = async () => {
       const response = await getProviders();
@@ -18,13 +29,88 @@ function Nav() {
     fetchProviders();
   }, []);
 
+  const [drawerState, setDrawerState] = useState({
+    right: false,
+  });
+
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setDrawerState({ ...drawerState, right: open });
+  };
+
+  const list = () => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
+    >
+      <List>
+        {session?.user ? (
+          <>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemText primary="My Profile" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemText primary="Create Prompt" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={signOut}>
+                <ListItemText primary="Sign Out" />
+              </ListItemButton>
+            </ListItem>
+          </>
+        ) : (
+          <>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemText primary="Blog" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemText primary="Prompts" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemText primary="Contact Us" />
+              </ListItemButton>
+            </ListItem>
+            {providers &&
+              Object.values(providers).map((provider) => (
+                <ListItem disablePadding key={provider.name}>
+                  <ListItemButton onClick={() => signIn(provider.id)}>
+                    <ListItemText primary={`Sign in with ${provider.name}`} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+          </>
+        )}
+      </List>
+    </Box>
+  );
+
   return (
     <nav className="flex-between w-full mb-16 pt-3">
       <Link href="/" className="flex gap-2 flex-center">
         ShareAIprompt
       </Link>
-      {/* MOBILE NAVIGATION */}
+
+      {/* Larger screen navigation */}
       <div className="sm:flex hidden">
+        {/* Session information */}
         {session?.user ? (
           <div className="flex gap-3 md:gap-5">
             <Link href="/create-prompt" className="black_btn">
@@ -35,13 +121,13 @@ function Nav() {
             </button>
             <Link className="" href="/profile">
               <Image
-                className="rounded-full"
+                className="rounded-full cursor-pointer"
                 width="50"
                 height="47"
                 src={session?.user.image}
                 alt="image"
               />
-              {toggleDropdrown && (
+              {toggleDropdown && (
                 <div className="dropdown">
                   <Link
                     href="/profile"
@@ -58,7 +144,7 @@ function Nav() {
                     }}
                     className="mt-5 w-full black_btn"
                   >
-                    Signout
+                    Sign Out
                   </button>
                 </div>
               )}
@@ -70,7 +156,6 @@ function Nav() {
               <li>Blog</li>
               <li>Prompts</li>
               <li>Contact Us</li>
-
               {providers &&
                 Object.values(providers).map((provider) => (
                   <button
@@ -89,65 +174,36 @@ function Nav() {
         )}
       </div>
 
+      {/* Mobile navigation */}
       <div className="sm:hidden flex relative">
+        {/* Conditionally render the avatar or hamburger button */}
         {session?.user ? (
-          <div className="flex">
-            <Image
-              className="rounded-full"
-              width="50"
-              height="47"
-              src={session?.user.image}
-              alt="image"
-              onClick={() => setToggleDropdown((prev) => !prev)}
-            />
-
-            {toggleDropdrown && (
-              <div className="dropdown">
-                <Link
-                  href="/profile"
-                  onClick={() => setToggleDropdown(false)}
-                  className="dropdown_link"
-                >
-                  My Profile
-                </Link>
-                <Link
-                  href="/create-prompt"
-                  onClick={() => setToggleDropdown(false)}
-                  className="dropdown_link"
-                >
-                  Create Prompt
-                </Link>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setToggleDropdown(false);
-                    signOut();
-                  }}
-                  className="mt-5 w-full black_btn"
-                >
-                  Sign Out
-                </button>
-              </div>
-            )}
-          </div>
+          <Image
+            className="rounded-full cursor-pointer"
+            width="50"
+            height="47"
+            src={session?.user.image}
+            alt="image"
+            onClick={toggleDrawer(true)}
+          />
         ) : (
-          <>
-            {providers &&
-              Object.values(providers).map((provider) => (
-                <button
-                  type="button"
-                  key={provider.name}
-                  onClick={() => {
-                    signIn(provider.id);
-                  }}
-                  className="black_btn"
-                >
-                  Sign in
-                </button>
-              ))}
-          </>
+          <IconButton
+            className="hamburger-btn"
+            color="inherit"
+            aria-label="menu"
+            onClick={toggleDrawer(true)}
+          >
+            <MenuIcon />
+          </IconButton>
         )}
+        <Drawer
+          anchor="right"
+          open={drawerState.right}
+          onClose={toggleDrawer(false)}
+        >
+          {list()}
+        </Drawer>
+        {/* ... Your existing code */}
       </div>
     </nav>
   );
